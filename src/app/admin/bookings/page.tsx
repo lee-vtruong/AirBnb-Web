@@ -25,7 +25,7 @@ export default function ManageBookingsPage() {
         setIsLoading(true);
         try {
             const response = await datPhongService.getDatPhongAll();
-            setBookings(response.data.content);
+            setBookings(response.data);
         } catch {
             toast.error('Không thể tải danh sách đặt phòng.');
         } finally {
