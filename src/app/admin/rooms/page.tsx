@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Axios } from 'axios';
 import { AxiosError } from 'axios';
 
+export type CreatePhongDto = Omit<Phong, 'id'>;
 
 const { Option } = Select;
 
@@ -22,7 +23,7 @@ type UploadFormValues = {
         type?: string;
         size?: number;
         lastModified?: number;
-        [key: string]: string | number | boolean | File | undefined; 
+        [key: string]: string | number | boolean | File | undefined;
     }[];
 };
 
@@ -91,13 +92,13 @@ export default function ManageRoomsPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: Omit<ViTri, 'id'>) => {
+    const onFinish = async (values: Omit<Phong, 'id'>) => {
         try {
             if (editingRoom) {
                 await phongService.updatePhong(editingRoom.id, values);
                 toast.success('Cập nhật phòng thành công!');
             } else {
-                await phongService.addPhong({ ...values, id: 0 });
+                await phongService.addPhong(values);
                 toast.success('Thêm phòng thành công!');
             }
             fetchRooms(pagination.current, pagination.pageSize, searchTerm);

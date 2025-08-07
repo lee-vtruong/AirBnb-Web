@@ -47,7 +47,7 @@ export default function ProfilePage() {
         try {
             const updatedValues = {
                 ...values,
-                birthday: values.birthday.format('YYYY-MM-DD'),
+                birthday: values.birthday ? values.birthday.format('YYYY-MM-DD') : undefined,
             };
             await nguoiDungService.updateNguoiDung(currentUser.id, updatedValues);
             alert('Cập nhật thông tin thành công!');

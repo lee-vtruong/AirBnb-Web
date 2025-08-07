@@ -1,4 +1,3 @@
-// app/phong/[id]/page.tsx
 import phongService from '@/services/phongService';
 import { Phong } from '@/types/room.types';
 import BookingWidget from '@/components/BookingWidget';
@@ -12,11 +11,16 @@ interface Props {
 }
 
 async function getRoomById(id: string): Promise<Phong | null> {
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+        console.error(`[Invalid ID] ID ${id} is not a valid number`);
+        return null;
+    }
     try {
         console.log('Fetching room with ID:', id);
-        const response = await phongService.getPhongById(id);
+        const response = await phongService.getPhongById(numericId);
         console.log('Room detail response:', response.data);
-        return response.data?.content || null;
+        return response.data || null;
     } catch (error) {
         console.error(`[API Error] Failed to fetch room ${id}:`, error);
         return null;
@@ -38,7 +42,6 @@ export default async function RoomDetailPage({ params }: Props) {
 
         return (
             <div className="container mx-auto px-4 py-8">
-                {/* Room Title */}
                 <div className="mb-6">
                     <h1 className="text-3xl font-bold mb-2">{room.tenPhong}</h1>
                     <div className="flex items-center text-gray-600 text-sm">
@@ -52,7 +55,6 @@ export default async function RoomDetailPage({ params }: Props) {
                     </div>
                 </div>
 
-                {/* Room Image */}
                 <div className="mb-8">
                     <div className="aspect-video w-full relative rounded-xl overflow-hidden bg-gray-200">
                         {room.hinhAnh ? (
@@ -72,7 +74,6 @@ export default async function RoomDetailPage({ params }: Props) {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Room Info */}
                     <div className="lg:col-span-2">
                         <div className="border-b pb-6 mb-6">
                             <h2 className="text-xl font-semibold mb-4">Mô tả</h2>
@@ -81,7 +82,6 @@ export default async function RoomDetailPage({ params }: Props) {
                             </p>
                         </div>
 
-                        {/* Amenities */}
                         <div className="border-b pb-6 mb-6">
                             <h2 className="text-xl font-semibold mb-4">Tiện nghi</h2>
                             <div className="grid grid-cols-2 gap-4">
@@ -143,7 +143,6 @@ export default async function RoomDetailPage({ params }: Props) {
                         </div>
                     </div>
 
-                    {/* Booking Widget */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-24">
                             <BookingWidget room={room} />

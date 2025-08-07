@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Popconfirm, InputRef, Space } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Table, Button, Modal, Form, Input, Select, Popconfirm, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import type { TableProps, TableColumnType } from 'antd';
+import type { TableProps, TableColumnType, InputRef } from 'antd';
 import { NguoiDung } from '@/types/user.types';
 import nguoiDungService from '@/services/nguoiDungService';
 import { toast } from 'react-toastify';
@@ -11,34 +11,44 @@ import { AxiosError } from 'axios';
 
 const { Option } = Select;
 
-type LocationFormValues = {
-    tenViTri: string;
-    tinhThanh: string;
-    quocGia: string;
-    hinhAnh: string;
+// Define form values type
+type UserFormValues = {
+    name: string;
+    email: string;
+    password?: string;
+    phone: string;
+    birthday: string;
+    gender: boolean;
+    role: 'ADMIN' | 'USER';
 };
 
-type UploadFormValues = {
-    hinhAnh: {
-        originFileObj: File;
-    }[];
+// Define payload type for adding a user
+type AddNguoiDungPayload = {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    birthday: string;
+    gender: boolean;
+    role: 'ADMIN' | 'USER';
 };
+
+// Define payload type for updating a user
+type UpdateNguoiDungPayload = Omit<AddNguoiDungPayload, 'password'> & { password?: string };
 
 export default function ManageUsersPage() {
     const [users, setUsers] = useState<NguoiDung[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingUser, setEditingUser] = useState<NguoiDung | null>(null);
-
-    // State cho phân trang và tìm kiếm
     const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useState<InputRef>(null);
-
+    const searchInput = useRef<InputRef | null>(null);
     const [form] = Form.useForm();
 
-    // Hàm fetch dữ liệu với phân trang và tìm kiếm
+    // Fetch users with pagination and search
     const fetchUsers = async (page = 1, pageSize = 10, keyword = '') => {
         setIsLoading(true);
         try {
@@ -82,7 +92,7 @@ export default function ManageUsersPage() {
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
                 <Input
-                    ref={searchInput.current}
+                    ref={searchInput}
                     placeholder={`Tìm kiếm ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
@@ -90,22 +100,39 @@ export default function ManageUsersPage() {
                     style={{ marginBottom: 8, display: 'block' }}
                 />
                 <Space>
-                    <Button type="primary" onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)} icon={<SearchOutlined />} size="small">Tìm</Button>
-                    <Button onClick={() => clearFilters && handleReset(clearFilters)} size="small">Reset</Button>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                    >
+                        Tìm
+                    </Button>
+                    <Button onClick={() => clearFilters && handleReset(clearFilters)} size="small">
+                        Reset
+                    </Button>
                 </Space>
             </div>
         ),
         filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase()),
-        render: (text) => searchedColumn === dataIndex ? (
-            <Highlighter highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }} searchWords={[searchText]} autoEscape textToHighlight={text ? text.toString() : ''} />
-        ) : (text),
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text ? text.toString() : ''}
+                />
+            ) : (
+                text
+            ),
     });
 
     const showModal = (user: NguoiDung | null = null) => {
         setEditingUser(user);
         if (user) {
-            form.setFieldsValue({ ...user, birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : null });
+            form.setFieldsValue({ ...user, birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' });
         } else {
             form.resetFields();
         }
@@ -118,15 +145,19 @@ export default function ManageUsersPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: LocationFormValues) => {
+    const onFinish = async (values: UserFormValues) => {
         const payload = { ...values, birthday: new Date(values.birthday).toISOString() };
         try {
             if (editingUser) {
-                await nguoiDungService.updateNguoiDung(editingUser.id, payload);
+                const updatePayload: UpdateNguoiDungPayload = { ...payload, id: editingUser.id };
+                await nguoiDungService.updateNguoiDung(editingUser.id, updatePayload);
                 toast.success('Cập nhật người dùng thành công!');
             } else {
-                // API yêu cầu id=0 và role
-                const addUserPayload = { ...payload, id: 0, role: values.role || 'USER' };
+                if (!values.password) {
+                    toast.error('Mật khẩu là bắt buộc khi thêm người dùng.');
+                    return;
+                }
+                const addUserPayload: AddNguoiDungPayload = { ...payload, id: 0, password: values.password };
                 await nguoiDungService.addUser(addUserPayload);
                 toast.success('Thêm người dùng thành công!');
             }
@@ -153,12 +184,25 @@ export default function ManageUsersPage() {
         { title: 'Tên', dataIndex: 'name', key: 'name', ...getColumnSearchProps('name') },
         { title: 'Email', dataIndex: 'email', key: 'email', ...getColumnSearchProps('email') },
         { title: 'SĐT', dataIndex: 'phone', key: 'phone' },
-        { title: 'Vai trò', dataIndex: 'role', key: 'role', filters: [{ text: 'ADMIN', value: 'ADMIN' }, { text: 'USER', value: 'USER' }], onFilter: (value, record) => record.role.indexOf(value as string) === 0 },
         {
-            title: 'Hành động', key: 'action', render: (_, record) => (
+            title: 'Vai trò',
+            dataIndex: 'role',
+            key: 'role',
+            filters: [
+                { text: 'ADMIN', value: 'ADMIN' },
+                { text: 'USER', value: 'USER' },
+            ],
+            onFilter: (value, record) => record.role.indexOf(value as string) === 0,
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => (
                 <Space size="middle">
                     <Button onClick={() => showModal(record)}>Sửa</Button>
-                    <Popconfirm title="Bạn có chắc muốn xóa?" onConfirm={() => handleDelete(record.id)}><Button danger>Xóa</Button></Popconfirm>
+                    <Popconfirm title="Bạn có chắc muốn xóa?" onConfirm={() => handleDelete(record.id)}>
+                        <Button danger>Xóa</Button>
+                    </Popconfirm>
                 </Space>
             ),
         },
@@ -168,19 +212,57 @@ export default function ManageUsersPage() {
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Quản lý Người dùng</h1>
-                <Button type="primary" onClick={() => showModal()}>Thêm Quản trị viên</Button>
+                <Button type="primary" onClick={() => showModal()}>
+                    Thêm Quản trị viên
+                </Button>
             </div>
-            <Table dataSource={users} columns={columns} rowKey="id" pagination={pagination} loading={isLoading} onChange={handleTableChange} />
-            <Modal title={editingUser ? "Sửa thông tin User" : "Thêm User mới"} open={isModalVisible} onCancel={handleCancel} footer={null}>
+            <Table
+                dataSource={users}
+                columns={columns}
+                rowKey="id"
+                pagination={pagination}
+                loading={isLoading}
+                onChange={handleTableChange}
+            />
+            <Modal
+                title={editingUser ? 'Sửa thông tin User' : 'Thêm User mới'}
+                open={isModalVisible}
+                onCancel={handleCancel}
+                footer={null}
+            >
                 <Form form={form} layout="vertical" onFinish={onFinish} className="mt-4">
-                    <Form.Item name="name" label="Tên" rules={[{ required: true }]}><Input /></Form.Item>
-                    <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}><Input /></Form.Item>
-                    {!editingUser && <Form.Item name="password" label="Mật khẩu" rules={[{ required: true }]}><Input.Password /></Form.Item>}
-                    <Form.Item name="phone" label="Số điện thoại" rules={[{ required: true }]}><Input /></Form.Item>
-                    <Form.Item name="birthday" label="Ngày sinh" rules={[{ required: true }]}><Input type="date" /></Form.Item>
-                    <Form.Item name="gender" label="Giới tính" rules={[{ required: true }]}><Select><Option value={true}>Nam</Option><Option value={false}>Nữ</Option></Select></Form.Item>
-                    <Form.Item name="role" label="Vai trò" rules={[{ required: true }]}><Select><Option value="ADMIN">ADMIN</Option><Option value="USER">USER</Option></Select></Form.Item>
-                    <Button type="primary" htmlType="submit" className="w-full">Lưu</Button>
+                    <Form.Item name="name" label="Tên" rules={[{ required: true, message: 'Vui lòng nhập tên' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email', message: 'Vui lòng nhập email hợp lệ' }]}>
+                        <Input />
+                    </Form.Item>
+                    {!editingUser && (
+                        <Form.Item name="password" label="Mật khẩu" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}>
+                            <Input.Password />
+                        </Form.Item>
+                    )}
+                    <Form.Item name="phone" label="Số điện thoại" rules={[{ required: true, message: 'Vui lòng nhập số điện thoại' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="birthday" label="Ngày sinh" rules={[{ required: true, message: 'Vui lòng chọn ngày sinh' }]}>
+                        <Input type="date" />
+                    </Form.Item>
+                    <Form.Item name="gender" label="Giới tính" rules={[{ required: true, message: 'Vui lòng chọn giới tính' }]}>
+                        <Select>
+                            <Option value={true}>Nam</Option>
+                            <Option value={false}>Nữ</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="role" label="Vai trò" rules={[{ required: true, message: 'Vui lòng chọn vai trò' }]}>
+                        <Select>
+                            <Option value="ADMIN">ADMIN</Option>
+                            <Option value="USER">USER</Option>
+                        </Select>
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" className="w-full">
+                        Lưu
+                    </Button>
                 </Form>
             </Modal>
         </div>

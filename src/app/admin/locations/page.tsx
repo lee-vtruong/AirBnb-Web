@@ -15,9 +15,17 @@ type ViTriFormValues = {
 };
 
 type UploadFormValues = {
-  hinhAnh: {
-    originFileObj: File;
-  }[];
+    hinhAnh: {
+        originFileObj: File;
+    }[];
+};
+
+type PaginatedResponse<T> = {
+    pageIndex: number;
+    pageSize: number;
+    totalRow: number;
+    keywords: string;
+    data: T[];
 };
 
 export default function ManageLocationsPage() {
@@ -37,9 +45,15 @@ export default function ManageLocationsPage() {
         setIsLoading(true);
         try {
             const response = await viTriService.getViTriPhanTrang(page, pageSize, keyword);
-            const data = response.data.content;
+
+            const data: PaginatedResponse<ViTri> = response.data.content;
+
             setLocations(data.data);
-            setPagination({ current: data.pageIndex, pageSize: data.pageSize, total: data.totalRow });
+            setPagination({
+                current: data.pageIndex,
+                pageSize: data.pageSize,
+                total: data.totalRow,
+            });
         } catch {
             toast.error('Không thể tải danh sách vị trí.');
         } finally {

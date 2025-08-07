@@ -10,6 +10,7 @@ import authService from '@/services/authService';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { SignInResponse } from '@/types/auth.types';
 
 export default function SignInPage() {
     const dispatch = useAppDispatch();
@@ -17,14 +18,11 @@ export default function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { currentUser } = useAppSelector((state) => state.auth);
 
-    // useEffect này bây giờ chỉ dùng để ngăn người đã đăng nhập vào lại trang signin
     useEffect(() => {
         if (currentUser) {
-            // Nếu đã là admin, đảm bảo họ ở trang admin
             if (currentUser.role === 'ADMIN') {
                 router.replace('/admin/users');
             } else {
-                // Nếu là user, đảm bảo họ ở trang chủ
                 router.replace('/');
             }
         }
@@ -36,7 +34,7 @@ export default function SignInPage() {
             password: '',
         },
         validationSchema: Yup.object({
-            // email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+            email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
             password: Yup.string().required('Mật khẩu là bắt buộc'),
         }),
         onSubmit: async (values) => {
@@ -47,12 +45,9 @@ export default function SignInPage() {
                 if (response.data && response.data.content) {
                     const { user, token } = response.data.content;
 
-                    // Dispatch action để lưu thông tin vào Redux và localStorage
                     dispatch(loginSuccess({ user, token }));
                     toast.success('Đăng nhập thành công!');
 
-                    // QUYẾT ĐỊNH CHUYỂN HƯỚNG NGAY TẠI ĐÂY
-                    // Dựa vào thông tin `user` vừa nhận được từ API
                     if (user.role === 'ADMIN') {
                         router.push('/admin/users');
                     } else {
@@ -68,7 +63,6 @@ export default function SignInPage() {
                 } else {
                     throw new Error('Dữ liệu trả về không hợp lệ');
                 }
-
             } catch (error: unknown) {
                 const err = error as AxiosError<{ content: string }>;
                 toast.error(err.response?.data?.content || 'Email hoặc mật khẩu không đúng.');
@@ -78,8 +72,6 @@ export default function SignInPage() {
         },
     });
 
-    // Nếu đang trong quá trình xác thực (Redux đang load), hiển thị loading
-    // để tránh việc useEffect chạy quá sớm
     if (typeof window !== 'undefined' && localStorage.getItem('accessToken') && !currentUser) {
         return <div>Đang xác thực...</div>;
     }
@@ -89,7 +81,6 @@ export default function SignInPage() {
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
                 <h1 className="text-3xl font-bold text-center text-rose-500">Đăng nhập</h1>
                 <form onSubmit={formik.handleSubmit} className="space-y-6" noValidate>
-                    {/* ... (phần form giữ nguyên) ... */}
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                         <input

@@ -1,4 +1,5 @@
 import api from '@/lib/api';
+import axios from 'axios';
 import { ViTri } from '@/types/location.types';
 
 interface ApiResponse<T> {
@@ -8,10 +9,12 @@ interface ApiResponse<T> {
 const viTriService = {
     getViTriAll: () => api.get<ApiResponse<ViTri[]>>('/api/vi-tri'),
 
-    getViTriPhanTrang: (pageIndex = 1, pageSize = 8, keyword = '') =>
-        api.get<ApiResponse<{ data: ViTri[] }>>(
-            `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`
-        ),
+    getViTriPhanTrang: (pageIndex = 1, pageSize = 10, keyword = '') => {
+        const url = `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${keyword}`;
+        console.log('Fetching URL:', url);
+        return api.get(url);
+    },
+
 
     addViTri: (data: ViTri) => api.post('/api/vi-tri', data),
 

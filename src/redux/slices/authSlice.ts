@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthResponse, NguoiDung } from '@/types/user.types';
-import { ACCESS_TOKEN } from '@/utils/config'; // Tạo file config này
+import { User, AuthResponse } from '@/types/auth.types';
+import { ACCESS_TOKEN } from '@/utils/config'; 
 
 interface AuthState {
-    currentUser: NguoiDung | null;
+    currentUser: User | null;
     token: string | null;
     isLoading: boolean;
     error: string | null;
@@ -20,7 +20,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        loginSuccess: (state, action: PayloadAction<AuthResponse['content']>) => {
+        loginSuccess: (state, action: PayloadAction<AuthResponse>) => {
             state.currentUser = action.payload.user;
             state.token = action.payload.token;
             state.isLoading = false;
@@ -46,6 +46,8 @@ const authSlice = createSlice({
         logout: (state) => {
             state.currentUser = null;
             state.token = null;
+            state.isLoading = false;
+            state.error = null;
             if (typeof window !== 'undefined') {
                 localStorage.removeItem(ACCESS_TOKEN);
                 localStorage.removeItem('user_info');
