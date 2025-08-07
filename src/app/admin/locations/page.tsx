@@ -6,6 +6,19 @@ import type { TableProps } from 'antd';
 import { ViTri } from '@/types/location.types';
 import viTriService from '@/services/viTriService';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
+
+type ViTriFormValues = {
+    tenViTri: string;
+    tinhThanh: string;
+    quocGia: string;
+};
+
+type UploadFormValues = {
+  hinhAnh: {
+    originFileObj: File;
+  }[];
+};
 
 export default function ManageLocationsPage() {
     const [locations, setLocations] = useState<ViTri[]>([]);
@@ -59,7 +72,7 @@ export default function ManageLocationsPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: ViTriFormValues) => {
         try {
             if (editingLocation) {
                 await viTriService.updateViTri(editingLocation.id, values);
@@ -70,8 +83,9 @@ export default function ManageLocationsPage() {
             }
             fetchLocations(pagination.current, pagination.pageSize, searchTerm);
             handleCancel();
-        } catch (error: any) {
-            toast.error(error.response?.data?.content || 'Thao tác thất bại.');
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ content: string }>;
+            toast.error(err.response?.data?.content || 'Thao tác thất bại.');
         }
     };
 
@@ -90,7 +104,7 @@ export default function ManageLocationsPage() {
         setIsUploadModalVisible(true);
     };
 
-    const handleUpload = async (values: any) => {
+    const handleUpload = async (values: UploadFormValues) => {
         if (!uploadingLocationId || !values.hinhAnh || values.hinhAnh.length === 0) {
             toast.warn('Vui lòng chọn một file ảnh.');
             return;
@@ -141,7 +155,7 @@ export default function ManageLocationsPage() {
             </div>
             <Input.Search placeholder="Tìm kiếm theo tên vị trí, tỉnh thành..." onSearch={handleSearch} enterButton className="mb-6" />
             <Table dataSource={locations} columns={columns} rowKey="id" pagination={pagination} loading={isLoading} onChange={handleTableChange} />
-            
+
             <Modal title={editingLocation ? "Sửa Vị trí" : "Thêm Vị trí mới"} open={isModalVisible} onCancel={handleCancel} footer={null}>
                 <Form form={form} layout="vertical" onFinish={onFinish} className="mt-4">
                     <Form.Item name="tenViTri" label="Tên Vị trí" rules={[{ required: true }]}><Input /></Form.Item>

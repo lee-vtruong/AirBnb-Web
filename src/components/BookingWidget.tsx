@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { DatePicker } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
+import { AxiosError } from 'axios';
 
 interface BookingWidgetProps {
     room: Phong | null | undefined;
@@ -113,9 +114,9 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
             } else {
                 throw new Error(response.data?.content || 'API không trả về kết quả thành công');
             }
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.content || 'Có lỗi xảy ra khi đặt phòng. Vui lòng thử lại!';
-            toast.error(errorMessage);
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ content: string }>;
+            toast.error(err.response?.data?.content || 'Có lỗi xảy ra khi đặt phòng, vui lòng thử lại sau!');
         } finally {
             setIsLoading(false);
         }
@@ -180,10 +181,10 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
 
             <button
                 className={`w-full py-3 font-semibold rounded-xl shadow-md transition-all ${isLoading
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : isLoggedIn
-                            ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : isLoggedIn
+                        ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
                     }`}
                 onClick={handleBooking}
                 disabled={isLoading}

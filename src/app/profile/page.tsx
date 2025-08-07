@@ -7,12 +7,19 @@ import datPhongService from '@/services/datPhongService'; // Tạo service này
 import nguoiDungService from '@/services/nguoiDungService'; // Tạo service này
 import { Tabs, Form, Input, Button, DatePicker, Spin, Avatar } from 'antd';
 import moment from 'moment';
+import { DatPhongResponse } from '@/types/booking.types';
+
+type UserProfileForm = {
+    name?: string;
+    phone?: string;
+    birthday?: moment.Moment;
+};
 
 const { TabPane } = Tabs;
 
 export default function ProfilePage() {
     const { currentUser } = useAppSelector(state => state.auth);
-    const [bookedRooms, setBookedRooms] = useState<any[]>([]);
+    const [bookedRooms, setBookedRooms] = useState<DatPhongResponse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [form] = Form.useForm();
 
@@ -35,7 +42,7 @@ export default function ProfilePage() {
         }
     }, [currentUser, form]);
 
-    const handleUpdateProfile = async (values: any) => {
+    const handleUpdateProfile = async (values: UserProfileForm) => {
         if (!currentUser) return;
         try {
             const updatedValues = {

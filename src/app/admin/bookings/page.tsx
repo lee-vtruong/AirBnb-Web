@@ -8,6 +8,10 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
+type BookingFormValues = {
+    dateRange: [dayjs.Dayjs, dayjs.Dayjs];
+    soLuongKhach: number;
+};
 
 export default function ManageBookingsPage() {
     const [bookings, setBookings] = useState<DatPhongResponse[]>([]);
@@ -48,7 +52,7 @@ export default function ManageBookingsPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: BookingFormValues) => {
         if (!editingBooking) return;
         try {
             const payload = {
@@ -62,8 +66,9 @@ export default function ManageBookingsPage() {
             toast.success('Cập nhật đặt phòng thành công!');
             fetchBookings();
             handleCancel();
-        } catch (error: any) {
-            toast.error(error.response?.data?.content || 'Cập nhật thất bại.');
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { content?: string } } };
+            toast.error(err.response?.data?.content || 'Cập nhật thất bại.');
         }
     };
 
@@ -98,7 +103,7 @@ export default function ManageBookingsPage() {
         <div>
             <h1 className="text-3xl font-bold mb-6">Quản lý Đặt phòng</h1>
             <Table dataSource={bookings} columns={columns} rowKey="id" loading={isLoading} />
-            
+
             <Modal title="Sửa thông tin Đặt phòng" open={isModalVisible} onCancel={handleCancel} footer={null}>
                 <Form form={form} layout="vertical" onFinish={onFinish} className="mt-4">
                     <Form.Item name="dateRange" label="Ngày đến - Ngày đi" rules={[{ required: true }]}><RangePicker className="w-full" /></Form.Item>

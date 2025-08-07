@@ -9,6 +9,7 @@ import { loginSuccess } from '@/redux/slices/authSlice';
 import authService from '@/services/authService';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 export default function SignInPage() {
     const dispatch = useAppDispatch();
@@ -68,9 +69,9 @@ export default function SignInPage() {
                     throw new Error('Dữ liệu trả về không hợp lệ');
                 }
 
-            } catch (error: any) {
-                const errorMessage = error.response?.data?.content || 'Email hoặc mật khẩu không đúng.';
-                toast.error(errorMessage);
+            } catch (error: unknown) {
+                const err = error as AxiosError<{ content: string }>;
+                toast.error(err.response?.data?.content || 'Email hoặc mật khẩu không đúng.');
             } finally {
                 setIsLoading(false);
             }

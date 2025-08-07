@@ -7,15 +7,29 @@ import { NguoiDung } from '@/types/user.types';
 import nguoiDungService from '@/services/nguoiDungService';
 import { toast } from 'react-toastify';
 import Highlighter from 'react-highlight-words';
+import { AxiosError } from 'axios';
 
 const { Option } = Select;
+
+type LocationFormValues = {
+    tenViTri: string;
+    tinhThanh: string;
+    quocGia: string;
+    hinhAnh: string;
+};
+
+type UploadFormValues = {
+    hinhAnh: {
+        originFileObj: File;
+    }[];
+};
 
 export default function ManageUsersPage() {
     const [users, setUsers] = useState<NguoiDung[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingUser, setEditingUser] = useState<NguoiDung | null>(null);
-    
+
     // State cho phân trang và tìm kiếm
     const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
     const [searchText, setSearchText] = useState('');
@@ -85,7 +99,7 @@ export default function ManageUsersPage() {
         onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase()),
         render: (text) => searchedColumn === dataIndex ? (
             <Highlighter highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }} searchWords={[searchText]} autoEscape textToHighlight={text ? text.toString() : ''} />
-        ) : ( text ),
+        ) : (text),
     });
 
     const showModal = (user: NguoiDung | null = null) => {
@@ -104,7 +118,7 @@ export default function ManageUsersPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: LocationFormValues) => {
         const payload = { ...values, birthday: new Date(values.birthday).toISOString() };
         try {
             if (editingUser) {
@@ -118,8 +132,9 @@ export default function ManageUsersPage() {
             }
             fetchUsers(pagination.current, pagination.pageSize, searchText);
             handleCancel();
-        } catch (error: any) {
-            toast.error(error.response?.data?.content || 'Thao tác thất bại.');
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ content: string }>;
+            toast.error(err.response?.data?.content || 'Thao tác thất bại.');
         }
     };
 

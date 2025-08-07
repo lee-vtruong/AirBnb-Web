@@ -8,8 +8,18 @@ import { ViTri } from '@/types/location.types';
 import phongService from '@/services/phongService';
 import viTriService from '@/services/viTriService';
 import { toast } from 'react-toastify';
+import { Axios } from 'axios';
+import { AxiosError } from 'axios';
+
 
 const { Option } = Select;
+
+type UploadFormValues = {
+    hinhAnh: {
+        originFileObj: File;
+        [key: string]: any;
+    }[];
+};
 
 export default function ManageRoomsPage() {
     const [rooms, setRooms] = useState<Phong[]>([]);
@@ -75,7 +85,7 @@ export default function ManageRoomsPage() {
         form.resetFields();
     };
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: Omit<ViTri, 'id'>) => {
         try {
             if (editingRoom) {
                 await phongService.updatePhong(editingRoom.id, values);
@@ -86,8 +96,9 @@ export default function ManageRoomsPage() {
             }
             fetchRooms(pagination.current, pagination.pageSize, searchTerm);
             handleCancel();
-        } catch (error: any) {
-            toast.error(error.response?.data?.content || 'Thao tác thất bại.');
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ content: string }>;
+            toast.error(err.response?.data?.content || 'Thao tác thất bại.');
         }
     };
 
@@ -106,7 +117,7 @@ export default function ManageRoomsPage() {
         setIsUploadModalVisible(true);
     };
 
-    const handleUpload = async (values: any) => {
+    const handleUpload = async (values: UploadFormValues) => {
         if (!uploadingRoomId || !values.hinhAnh || values.hinhAnh.length === 0) {
             toast.warn('Vui lòng chọn một file ảnh.');
             return;

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import authService from '@/services/authService';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { AxiosError } from 'axios';
 
 export default function SignUpPage() {
     const router = useRouter();
@@ -39,9 +40,9 @@ export default function SignUpPage() {
                 await authService.signUp(values);
                 toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
                 router.push('/signin');
-            } catch (error: any) {
-                const errorMessage = error.response?.data?.content || 'Đăng ký thất bại, email hoặc SĐT có thể đã tồn tại.';
-                toast.error(errorMessage);
+            } catch (error: unknown) {
+                const err = error as AxiosError<{ content: string }>;
+                toast.error(err.response?.data?.content || 'Đăng ký thất bại, email hoặc SĐT có thể đã tồn tại.');
             } finally {
                 setIsLoading(false);
             }

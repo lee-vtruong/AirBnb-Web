@@ -6,6 +6,7 @@ import { BinhLuan } from '@/types/comment.types';
 import binhLuanService from '@/services/binhLuanService';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
+import { AxiosError } from 'axios';
 
 interface CommentSectionProps {
     roomId: number;
@@ -54,7 +55,7 @@ export default function CommentSection({ roomId }: CommentSectionProps) {
             const payload = {
                 maPhong: roomId,
                 maNguoiBinhLuan: currentUser.id,
-                ngayBinhLuan: dayjs().toISOString(), 
+                ngayBinhLuan: dayjs().toISOString(),
                 noiDung: newComment,
                 saoBinhLuan: rating,
             };
@@ -64,11 +65,11 @@ export default function CommentSection({ roomId }: CommentSectionProps) {
 
             setNewComment('');
             setRating(5);
-            fetchComments(); 
+            fetchComments();
 
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.content || "Gửi bình luận thất bại.";
-            toast.error(errorMessage);
+        } catch (error: unknown) {
+            const err = error as AxiosError<{ content: string }>;
+            toast.error(err.response?.data?.content || 'Gửi bình luận thất bại.');
         } finally {
             setIsSubmitting(false);
         }
