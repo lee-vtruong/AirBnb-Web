@@ -17,9 +17,15 @@ const { Option } = Select;
 type UploadFormValues = {
     hinhAnh: {
         originFileObj: File;
-        [key: string]: any;
+        uid?: string;
+        name?: string;
+        type?: string;
+        size?: number;
+        lastModified?: number;
+        [key: string]: string | number | boolean | File | undefined; 
     }[];
 };
+
 
 export default function ManageRoomsPage() {
     const [rooms, setRooms] = useState<Phong[]>([]);
