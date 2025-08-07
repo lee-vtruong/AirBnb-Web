@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 const { RangePicker } = DatePicker;
+
 type BookingFormValues = {
     dateRange: [dayjs.Dayjs, dayjs.Dayjs];
     soLuongKhach: number;
@@ -18,14 +19,16 @@ export default function ManageBookingsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingBooking, setEditingBooking] = useState<DatPhongResponse | null>(null);
-
     const [form] = Form.useForm();
 
     const fetchBookings = async () => {
         setIsLoading(true);
         try {
             const response = await datPhongService.getDatPhongAll();
-            setBookings(response.data?.content || []);
+            const content = response.data?.content || [];
+            // Đảm bảo content luôn là array
+            const bookingsArray = Array.isArray(content) ? content : [content];
+            setBookings(bookingsArray);
         } catch {
             toast.error('Không thể tải danh sách đặt phòng.');
         } finally {
@@ -54,6 +57,7 @@ export default function ManageBookingsPage() {
 
     const onFinish = async (values: BookingFormValues) => {
         if (!editingBooking) return;
+
         try {
             const payload = {
                 maPhong: editingBooking.maPhong,
@@ -62,6 +66,7 @@ export default function ManageBookingsPage() {
                 ngayDi: values.dateRange[1].toISOString(),
                 soLuongKhach: values.soLuongKhach,
             };
+
             await datPhongService.updateDatPhong(editingBooking.id, payload);
             toast.success('Cập nhật đặt phòng thành công!');
             fetchBookings();
@@ -90,10 +95,17 @@ export default function ManageBookingsPage() {
         { title: 'Ngày Đi', dataIndex: 'ngayDi', key: 'ngayDi', render: (date) => dayjs(date).format('DD/MM/YYYY') },
         { title: 'Số Khách', dataIndex: 'soLuongKhach', key: 'soLuongKhach' },
         {
-            title: 'Hành động', key: 'action', render: (_, record) => (
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => (
                 <div className="space-x-2">
                     <Button onClick={() => showModal(record)}>Sửa</Button>
-                    <Popconfirm title="Bạn có chắc muốn xóa?" onConfirm={() => handleDelete(record.id)}><Button danger>Xóa</Button></Popconfirm>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa?"
+                        onConfirm={() => handleDelete(record.id)}
+                    >
+                        <Button danger>Xóa</Button>
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -102,13 +114,36 @@ export default function ManageBookingsPage() {
     return (
         <div>
             <h1 className="text-3xl font-bold mb-6">Quản lý Đặt phòng</h1>
-            <Table dataSource={bookings} columns={columns} rowKey="id" loading={isLoading} />
-
-            <Modal title="Sửa thông tin Đặt phòng" open={isModalVisible} onCancel={handleCancel} footer={null}>
+            <Table
+                dataSource={bookings}
+                columns={columns}
+                rowKey="id"
+                loading={isLoading}
+            />
+            <Modal
+                title="Sửa thông tin Đặt phòng"
+                open={isModalVisible}
+                onCancel={handleCancel}
+                footer={null}
+            >
                 <Form form={form} layout="vertical" onFinish={onFinish} className="mt-4">
-                    <Form.Item name="dateRange" label="Ngày đến - Ngày đi" rules={[{ required: true }]}><RangePicker className="w-full" /></Form.Item>
-                    <Form.Item name="soLuongKhach" label="Số lượng khách" rules={[{ required: true }]}><InputNumber min={1} className="w-full" /></Form.Item>
-                    <Button type="primary" htmlType="submit" className="w-full">Lưu thay đổi</Button>
+                    <Form.Item
+                        name="dateRange"
+                        label="Ngày đến - Ngày đi"
+                        rules={[{ required: true }]}
+                    >
+                        <RangePicker className="w-full" />
+                    </Form.Item>
+                    <Form.Item
+                        name="soLuongKhach"
+                        label="Số lượng khách"
+                        rules={[{ required: true }]}
+                    >
+                        <InputNumber min={1} className="w-full" />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit" className="w-full">
+                        Lưu thay đổi
+                    </Button>
                 </Form>
             </Modal>
         </div>
