@@ -59,7 +59,6 @@ export default function ManageRoomsPage() {
     const fetchLocations = async () => {
         try {
             const response = await viTriService.getViTriAll();
-            // Giả sử API trả về { content: [...] }
             setLocations(response.data?.content || []);
         } catch {
             toast.error('Không thể tải danh sách vị trí.');

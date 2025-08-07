@@ -2,8 +2,6 @@
 
 import { Phong } from "@/types/room.types";
 
-// Đây là component giữ chỗ. Để hiển thị bản đồ thật, bạn cần tích hợp
-// một thư viện như 'react-leaflet' hoặc '@react-google-maps/api'.
 export default function MapDisplay({ rooms }: { rooms: Phong[] }) {
     return (
         <div className="w-full h-full bg-gray-200 flex items-center justify-center">

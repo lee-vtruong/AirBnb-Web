@@ -2,7 +2,6 @@
 import React from 'react';
 import Link from 'next/link';
 
-// Component Icon Mạng xã hội để code gọn hơn
 const SocialIcon = ({ href, children }: { href: string, children: React.ReactNode }) => (
     <a href={href} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-rose-500 transition-colors duration-300">
         {children}
@@ -15,7 +14,6 @@ export default function Footer() {
             <div className="container mx-auto px-6 py-12 lg:py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-                    {/* Cột 1: Giới thiệu */}
                     <div className="space-y-4">
                         <h3 className="font-bold tracking-wider uppercase">Giới thiệu</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
@@ -27,7 +25,6 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Cột 2: Cộng đồng */}
                     <div className="space-y-4">
                         <h3 className="font-bold tracking-wider uppercase">Cộng đồng</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
@@ -37,7 +34,6 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Cột 3: Đón tiếp khách */}
                     <div className="space-y-4">
                         <h3 className="font-bold tracking-wider uppercase">Đón tiếp khách</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
@@ -47,7 +43,6 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Cột 4: Hỗ trợ */}
                     <div className="space-y-4">
                         <h3 className="font-bold tracking-wider uppercase">Hỗ trợ</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
@@ -61,7 +56,6 @@ export default function Footer() {
 
                 <hr className="my-8 border-gray-200" />
 
-                {/* Phần Copyright và Mạng xã hội */}
                 <div className="flex flex-col sm:flex-row items-center justify-between text-sm">
                     <p className="text-gray-500 text-center sm:text-left">
                         © {new Date().getFullYear()} Airbnb, Inc.

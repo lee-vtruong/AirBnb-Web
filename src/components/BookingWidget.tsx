@@ -57,7 +57,6 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
                             let currentDate = dayjs(booking.ngayDen);
                             const endDate = dayjs(booking.ngayDi);
 
-                            // Vô hiệu hóa tất cả các ngày từ ngày đến đến ngày đi
                             while (currentDate.isBefore(endDate, 'day')) {
                                 disabledDatesSet.add(currentDate.format('YYYY-MM-DD'));
                                 currentDate = currentDate.add(1, 'day');
@@ -76,10 +75,8 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
                         console.error("Chi tiết lỗi API:", error.response?.data);
                     }
 
-                    // Hiển thị lỗi cho người dùng
                     toast.error("Không thể tải được lịch đặt phòng. Vui lòng thử lại.");
 
-                    // Quan trọng: vẫn set mảng rỗng để không làm crash app, nhưng bây giờ lỗi là thật
                     setBookedDates([]);
                 }
             };
@@ -89,12 +86,10 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
     }, [room?.id]);
 
     const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-        // Vô hiệu hóa ngày trong quá khứ
         if (current && current < dayjs().startOf('day')) {
             return true;
         }
 
-        // Vô hiệu hóa những ngày đã được đặt
         if (bookedDates.includes(current.format('YYYY-MM-DD'))) {
             return true;
         }
@@ -130,8 +125,6 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
             return;
         }
 
-        // Kiểm tra xung đột một lần nữa trước khi gửi
-        // Logic này bây giờ sẽ hoạt động chính xác vì `bookedDates` đã có dữ liệu đúng
         let currentDate = checkIn.clone();
         while (currentDate.isBefore(checkOut, 'day')) {
             if (bookedDates.includes(currentDate.format('YYYY-MM-DD'))) {

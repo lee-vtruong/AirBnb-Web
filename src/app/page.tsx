@@ -4,7 +4,6 @@ import SearchWidget from '@/components/SearchWidget';
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Component Card tĩnh cho phần "Ở bất cứ đâu"
 const InspirationCard = ({ src, title }: { src: string, title: string }) => (
   <div>
     <div className="aspect-[4/3] w-full overflow-hidden rounded-lg">
@@ -15,7 +14,6 @@ const InspirationCard = ({ src, title }: { src: string, title: string }) => (
 );
 
 export default async function HomePage() {
-  // Lấy dữ liệu cho lưới "Khám phá" trên server
   let nearbyLocations: ViTri[] = [];
   try {
     const response = await viTriService.getViTriPhanTrang(1, 8);
@@ -26,9 +24,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      {/* 1. Phần Header và SearchWidget được đặt bên ngoài */}
       <div className="container mx-auto px-4 pt-6">
-        {/* Phần tab điều hướng giống Figma */}
         <div className="flex justify-center mb-6 border-b">
           <div className="flex space-x-8">
             <button className="py-4 border-b-2 border-black font-semibold">Nơi ở</button>
@@ -36,7 +32,6 @@ export default async function HomePage() {
             <button className="py-4 text-gray-500">Trải nghiệm trực tuyến</button>
           </div>
         </div>
-        {/* <SearchWidget /> */}
       </div>
 
       <div className="relative h-[500px] flex items-center justify-center text-white">

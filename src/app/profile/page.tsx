@@ -25,13 +25,11 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (currentUser) {
-            // Cập nhật form với thông tin user
             form.setFieldsValue({
                 ...currentUser,
                 birthday: currentUser.birthday ? moment(currentUser.birthday) : null,
             });
 
-            // Lấy danh sách phòng đã đặt
             datPhongService.getDatPhongTheoNguoiDung(currentUser.id)
                 .then(res => {
                     setBookedRooms(res.data.content);
@@ -51,7 +49,6 @@ export default function ProfilePage() {
             };
             await nguoiDungService.updateNguoiDung(currentUser.id, updatedValues);
             alert('Cập nhật thông tin thành công!');
-            // Cần dispatch action để cập nhật lại Redux state
         } catch {
             alert('Cập nhật thất bại!');
         }
@@ -64,7 +61,6 @@ export default function ProfilePage() {
     return (
         <div className="container mx-auto px-4 py-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Cột trái: Thông tin cá nhân */}
                 <div className="md:col-span-1 p-6 border rounded-xl shadow-lg">
                     <Avatar size={128} src={currentUser?.avatar} className="mx-auto block mb-4" />
                     <h2 className="text-2xl font-bold text-center">{currentUser?.name}</h2>
@@ -79,13 +75,11 @@ export default function ProfilePage() {
                     </Form>
                 </div>
 
-                {/* Cột phải: Phòng đã thuê */}
                 <div className="md:col-span-2">
                     <h2 className="text-3xl font-bold mb-6">Phòng đã thuê</h2>
                     <div className="space-y-6">
                         {bookedRooms.length > 0 ? (
                             bookedRooms.map(booking => (
-                                // Hiển thị card cho mỗi phòng đã đặt
                                 <div key={booking.id} className="p-4 border rounded-lg">
                                     Phòng ID: {booking.maPhong} - Từ {booking.ngayDen} đến {booking.ngayDi}
                                 </div>

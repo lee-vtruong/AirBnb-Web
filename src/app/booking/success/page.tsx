@@ -11,7 +11,6 @@ export default function BookingSuccessPage() {
             setCountdown((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
-                    // Auto redirect sau 10 giây
                     window.location.href = '/';
                     return 0;
                 }
@@ -26,7 +25,6 @@ export default function BookingSuccessPage() {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10">
-                    {/* Success Icon */}
                     <div className="flex justify-center mb-6">
                         <div className="rounded-full bg-green-100 p-3">
                             <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +33,6 @@ export default function BookingSuccessPage() {
                         </div>
                     </div>
 
-                    {/* Success Message */}
                     <div className="text-center">
                         <h1 className="text-2xl font-bold text-gray-900 mb-4">
                             🎉 Đặt phòng thành công!
@@ -45,7 +42,6 @@ export default function BookingSuccessPage() {
                         </p>
                     </div>
 
-                    {/* Booking Info */}
                     <div className="bg-gray-50 rounded-lg p-4 mb-6">
                         <h3 className="font-semibold text-gray-900 mb-3">Thông tin đặt phòng:</h3>
                         <div className="space-y-2 text-sm">
@@ -64,7 +60,6 @@ export default function BookingSuccessPage() {
                         </div>
                     </div>
 
-                    {/* Next Steps */}
                     <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
                         <div className="ml-3">
                             <h3 className="text-sm font-medium text-blue-800">
@@ -80,7 +75,6 @@ export default function BookingSuccessPage() {
                         </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="space-y-3">
                         <Link
                             href="/booking/history"
@@ -97,7 +91,6 @@ export default function BookingSuccessPage() {
                         </Link>
                     </div>
 
-                    {/* Auto redirect notice */}
                     <div className="mt-6 text-center">
                         <p className="text-xs text-gray-500">
                             Sẽ tự động chuyển về trang chủ sau {countdown} giây
@@ -106,7 +99,6 @@ export default function BookingSuccessPage() {
                 </div>
             </div>
 
-            {/* Contact Support */}
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="text-center">
                     <p className="text-sm text-gray-600">

@@ -21,7 +21,6 @@ export default function BookingItem({ booking }: { booking: DatPhongResponse }) 
     const [roomDetails, setRoomDetails] = useState<Phong | null>(null);
 
     useEffect(() => {
-        // Lấy thông tin chi tiết của phòng dựa trên maPhong
         const fetchRoomDetails = async () => {
             try {
                 const response = await phongService.getPhongById(booking.maPhong);
@@ -36,7 +35,6 @@ export default function BookingItem({ booking }: { booking: DatPhongResponse }) 
     }, [booking.maPhong]);
 
     if (!roomDetails) {
-        // Hiển thị placeholder trong khi đang tải chi tiết phòng
         return <div className="border rounded-lg p-4 mb-4 animate-pulse h-32 bg-gray-200"></div>;
     }
 

@@ -1,13 +1,11 @@
 import api from '@/lib/api';
-import { User } from '@/types/auth.types'; // Use the updated types from auth.types.ts
+import { User } from '@/types/auth.types'; 
 
-// Define payload for sign-in
 interface SignInPayload {
     email: string;
     password: string;
 }
 
-// Define payload for sign-up
 interface SignUpPayload {
     name: string;
     email: string;
@@ -17,7 +15,6 @@ interface SignUpPayload {
     gender: boolean;
 }
 
-// Define response structure for both sign-in and sign-up
 interface AuthResponse {
     user: User;
     token: string;
