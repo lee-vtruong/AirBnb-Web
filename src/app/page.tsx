@@ -1,103 +1,96 @@
-import Image from "next/image";
+import viTriService from '@/services/viTriService';
+import { ViTri } from '@/types/location.types';
+import SearchWidget from '@/components/SearchWidget';
+import Link from 'next/link';
+import Image from 'next/image';
 
-export default function Home() {
+// Component Card tĩnh cho phần "Ở bất cứ đâu"
+const InspirationCard = ({ src, title }: { src: string, title: string }) => (
+  <div>
+    <div className="aspect-[4/3] w-full overflow-hidden rounded-lg">
+      <img src={src} alt={title} className="w-full h-full object-cover" />
+    </div>
+    <h3 className="font-semibold text-lg mt-2">{title}</h3>
+  </div>
+);
+
+export default async function HomePage() {
+  // Lấy dữ liệu cho lưới "Khám phá" trên server
+  let nearbyLocations: ViTri[] = [];
+  try {
+    const response = await viTriService.getViTriPhanTrang(1, 8);
+    nearbyLocations = response.data.content.data || [];
+  } catch (error) {
+    console.error("Failed to fetch nearby locations:", error);
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <main>
+      {/* 1. Phần Header và SearchWidget được đặt bên ngoài */}
+      <div className="container mx-auto px-4 pt-6">
+        {/* Phần tab điều hướng giống Figma */}
+        <div className="flex justify-center mb-6 border-b">
+          <div className="flex space-x-8">
+            <button className="py-4 border-b-2 border-black font-semibold">Nơi ở</button>
+            <button className="py-4 text-gray-500">Trải nghiệm</button>
+            <button className="py-4 text-gray-500">Trải nghiệm trực tuyến</button>
+          </div>
+        </div>
+        {/* <SearchWidget /> */}
+      </div>
+
+      <div className="relative h-[500px] flex items-center justify-center text-white">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
+          src="/hero-banner.jpg"
+          alt="Hero Banner"
+          fill
+          className="object-cover brightness-75"
           priority
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="relative z-10 w-full px-4 text-center">
+          <h1 className="text-5xl font-bold mb-8 drop-shadow-lg">
+            Nhờ có Host, mọi điều đều có thể
+          </h1>
+          <SearchWidget />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      <div className="container mx-auto py-16 px-4">
+        <section>
+          <h2 className="text-4xl font-bold mb-8">Khám phá những điểm đến gần đây</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {nearbyLocations.map((viTri) => (
+              <Link key={viTri.id} href={`/phong-theo-vi-tri/${viTri.id}`}>
+                <div className="flex items-center space-x-4 group">
+                  <div className="w-16 h-16 relative rounded-lg overflow-hidden">
+                    {viTri.hinhAnh && (
+                      <Image
+                        src={viTri.hinhAnh}
+                        alt={viTri.tenViTri}
+                        fill className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-bold">{viTri.tenViTri}</h3>
+                    <p className="text-gray-500">Khoảng cách...</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-16">
+          <h2 className="text-4xl font-bold mb-8">Ở bất cứ đâu</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <InspirationCard src="/inspiration-1.jpg" title="Toàn bộ nhà" />
+            <InspirationCard src="/inspiration-2.jpg" title="Chỗ ở độc đáo" />
+            <InspirationCard src="/inspiration-3.jpg" title="Trang trại và thiên nhiên" />
+            <InspirationCard src="/inspiration-4.jpg" title="Cho phép mang theo thú cưng" />
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
