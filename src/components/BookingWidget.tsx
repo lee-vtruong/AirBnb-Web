@@ -37,8 +37,6 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
                 try {
                     console.log('Bắt đầu lấy lịch đặt phòng cho phòng:', room.id);
 
-                    // FIX: Thay đổi logic tại đây
-                    // 1. Gọi API để lấy TẤT CẢ các lượt đặt phòng
                     const response = await datPhongService.getDatPhongAll();
                     const allBookings = response.data?.content || [];
 
@@ -47,14 +45,12 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
                         throw new Error("Dữ liệu trả về không hợp lệ.");
                     }
 
-                    // 2. Lọc ra những lượt đặt phòng chỉ thuộc về phòng hiện tại
                     const roomBookings = allBookings.filter(
                         (booking: DatPhongResponse) => booking.maPhong === room.id
                     );
 
                     console.log('Các lượt đặt phòng của phòng này:', roomBookings);
 
-                    // 3. Xử lý các ngày đã đặt (logic này vẫn đúng)
                     const disabledDatesSet = new Set<string>();
                     roomBookings.forEach((booking: DatPhongResponse) => {
                         if (booking && booking.ngayDen && booking.ngayDi) {
@@ -155,16 +151,11 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
                 maNguoiDung: user.id,
             };
 
-            const response = await datPhongService.datPhong(bookingPayload);
+            await datPhongService.datPhong(bookingPayload);
 
-            // API POST thành công thường trả về status 201 (Created)
-            if (response.status === 201 || response.status === 200) {
-                toast.success('Đặt phòng thành công!');
-                router.push('/booking/history');
-            } else {
-                // Trường hợp API trả về 2xx nhưng không phải thành công như mong đợi
-                throw new Error(response.data?.content || 'Có lỗi xảy ra, API không trả về kết quả thành công');
-            }
+            toast.success('Đặt phòng thành công!');
+            router.push('/profile');
+
         } catch (error: unknown) {
             console.error('Lỗi khi đặt phòng:', error);
             const err = error as AxiosError<ApiErrorResponse>;
@@ -175,7 +166,6 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
         }
     };
 
-    // Phần JSX còn lại giữ nguyên, không cần thay đổi
     if (!isMounted) {
         return (
             <div className="border p-6 rounded-2xl shadow-lg space-y-4 animate-pulse">
@@ -237,10 +227,10 @@ export default function BookingWidget({ room }: BookingWidgetProps) {
 
             <button
                 className={`w-full py-3 font-semibold rounded-xl shadow-md transition-all ${isLoading
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : isLoggedIn
-                            ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : isLoggedIn
+                        ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
                     }`}
                 onClick={handleBooking}
                 disabled={isLoading}

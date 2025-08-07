@@ -1,6 +1,7 @@
 import api from '@/lib/api';
 import { Phong } from '@/types/room.types';
 
+
 const phongService = {
     getPhongPhanTrang: (pageIndex = 1, pageSize = 10, keyword = '') =>
         api.get(`/api/phong-thue/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${keyword}`),
@@ -15,12 +16,12 @@ const phongService = {
         api.post(`/api/phong-thue/upload-hinh-phong?maPhong=${maPhong}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         }),
-        
+
     getPhongThue: () => api.get<Phong[]>('/api/phong-thue'),
     getPhongTheoViTri: (maViTri: string) =>
-        api.get<Phong[]>(`/api/phong-thue/lay-phong-theo-vi-tri?maViTri=${maViTri}`),
+        api.get<{ content: Phong[] }>(`/api/phong-thue/lay-phong-theo-vi-tri?maViTri=${maViTri}`),
     getPhongById: (id: number) =>
-        api.get<Phong>(`/api/phong-thue/${id}`),
+        api.get<{ content: Phong }>(`/api/phong-thue/${id}`),
 };
 
 export default phongService;

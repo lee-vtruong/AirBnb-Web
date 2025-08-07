@@ -1,12 +1,4 @@
-export interface DatPhong {
-    id: number;
-    maPhong: number;
-    ngayDen: string;
-    ngayDi: string;
-    soLuongKhach: number;
-    maNguoiDung: number;
-}
-
+// src/types/booking.types.ts
 export interface DatPhongResponse {
   id: number;
   maPhong: number;
@@ -16,7 +8,7 @@ export interface DatPhongResponse {
   maNguoiDung: number;
 }
 
-export interface DatPhongApiResponse<T = DatPhongResponse | DatPhongResponse[]> {
+export interface DatPhongApiResponse<T> {
   statusCode: number;
   content: T;
   dateTime: string;

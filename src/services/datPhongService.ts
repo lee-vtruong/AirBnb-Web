@@ -1,3 +1,5 @@
+// src/services/datPhongService.ts
+
 import api from '@/lib/api';
 import { DatPhongResponse, DatPhongApiResponse, DatPhongPayload } from '@/types/booking.types';
 
@@ -5,58 +7,45 @@ const TOKEN_CYBERSOFT = process.env.NEXT_PUBLIC_CYBERSOFT_TOKEN || 'eyJhbGciOiJI
 
 const datPhongService = {
     getDatPhongAll: () =>
-        api.get<DatPhongApiResponse>('/api/dat-phong', {
+        api.get<DatPhongApiResponse<DatPhongResponse[]>>('/api/dat-phong', {
             headers: {
-                'Content-Type': 'application/json-patch+json',
-                tokenCybersoft: TOKEN_CYBERSOFT,
-            },
-        }),
-
-    // FIX: Sửa từ single quotes thành backticks để template literal hoạt động
-    getDatPhongByMaPhong: (maPhong: number) =>
-        api.get<DatPhongApiResponse>(`/api/dat-phong/lay-dat-phong-theo-phong?maPhong=${maPhong}`, {
-            headers: {
-                'Content-Type': 'application/json-patch+json',
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
 
     datPhong: (data: DatPhongPayload) =>
-        api.post<DatPhongApiResponse>('/api/dat-phong', data, {
+        api.post<DatPhongApiResponse<DatPhongResponse>>('/api/dat-phong', data, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json', 
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
 
     getDatPhongById: (id: number) =>
-        api.get<DatPhongApiResponse>(`/api/dat-phong/${id}`, {
+        api.get<DatPhongApiResponse<DatPhongResponse>>(`/api/dat-phong/${id}`, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
 
     updateDatPhong: (id: number, data: Partial<DatPhongPayload>) =>
-        api.put<DatPhongApiResponse>(`/api/dat-phong/${id}`, data, {
+        api.put<DatPhongApiResponse<DatPhongResponse>>(`/api/dat-phong/${id}`, data, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
 
     deleteDatPhong: (id: number) =>
-        api.delete<DatPhongApiResponse>(`/api/dat-phong/${id}`, {
+        api.delete<DatPhongApiResponse<DatPhongResponse>>(`/api/dat-phong/${id}`, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
 
     getDatPhongTheoNguoiDung: (maNguoiDung: number) =>
-        api.get<DatPhongApiResponse>(`/api/dat-phong/lay-theo-nguoi-dung/${maNguoiDung}`, {
+        api.get<DatPhongApiResponse<DatPhongResponse[]>>(`/api/dat-phong/lay-theo-nguoi-dung/${maNguoiDung}`, {
             headers: {
-                'Content-Type': 'application/json-patch+json',
                 tokenCybersoft: TOKEN_CYBERSOFT,
             },
         }),
