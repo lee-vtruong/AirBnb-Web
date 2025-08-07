@@ -10,7 +10,7 @@ import authService from '@/services/authService';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
-import { SignInResponse } from '@/types/auth.types';
+// import { SignInResponse } from '@/types/auth.types';
 
 export default function SignInPage() {
     const dispatch = useAppDispatch();
@@ -34,7 +34,7 @@ export default function SignInPage() {
             password: '',
         },
         validationSchema: Yup.object({
-            email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+            // email: Yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
             password: Yup.string().required('Mật khẩu là bắt buộc'),
         }),
         onSubmit: async (values) => {

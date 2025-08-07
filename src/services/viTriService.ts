@@ -9,10 +9,14 @@ interface ApiResponse<T> {
 const viTriService = {
     getViTriAll: () => api.get<ApiResponse<ViTri[]>>('/api/vi-tri'),
 
-    getViTriPhanTrang: (pageIndex = 1, pageSize = 10, keyword = '') => {
-        const url = `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${keyword}`;
-        console.log('Fetching URL:', url);
-        return api.get(url);
+    getViTriPhanTrang(page: number, pageSize: number, keyword: string = '') {
+        return api.get(`/api/vi-tri/phan-trang-tim-kiem`, {
+            params: {
+                pageIndex: page,
+                pageSize: pageSize,
+                keyword: keyword
+            }
+        });
     },
 
 
