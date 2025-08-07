@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/redux/hooks';
 import datPhongService from '@/services/datPhongService';
 import BookingItem from '@/components/BookingItem';
-import { DatPhongResponse } from '@/types/booking.types'; 
+import { DatPhongResponse } from '@/types/booking.types';
 import Link from 'next/link';
 
 export default function BookingHistoryPage() {
@@ -21,7 +21,10 @@ export default function BookingHistoryPage() {
                 try {
                     const response = await datPhongService.getDatPhongTheoNguoiDung(currentUser.id);
                     if (response.data && response.data.content) {
-                        setBookings(response.data.content);
+                        const content = response.data.content;
+                        // Đảm bảo content luôn là array
+                        const bookingsArray = Array.isArray(content) ? content : [content];
+                        setBookings(bookingsArray);
                     }
                 } catch (err) {
                     console.error('Failed to fetch bookings:', err);

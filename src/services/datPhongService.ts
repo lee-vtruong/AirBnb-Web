@@ -12,8 +12,9 @@ const datPhongService = {
             },
         }),
 
+    // FIX: Sửa từ single quotes thành backticks để template literal hoạt động
     getDatPhongByMaPhong: (maPhong: number) =>
-        api.get<DatPhongApiResponse>('/api/dat-phong/lay-dat-phong-theo-phong?maPhong=${maPhong}', {
+        api.get<DatPhongApiResponse>(`/api/dat-phong/lay-dat-phong-theo-phong?maPhong=${maPhong}`, {
             headers: {
                 'Content-Type': 'application/json-patch+json',
                 tokenCybersoft: TOKEN_CYBERSOFT,

@@ -20,7 +20,7 @@ async function getRoomById(id: string): Promise<Phong | null> {
         console.log('Fetching room with ID:', id);
         const response = await phongService.getPhongById(numericId);
         console.log('Room detail response:', response.data);
-        return response.data || null;
+        return response.data?.content || null;
     } catch (error) {
         console.error(`[API Error] Failed to fetch room ${id}:`, error);
         return null;
