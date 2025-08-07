@@ -2,16 +2,30 @@ import api from '@/lib/api';
 import { ViTri } from '@/types/location.types';
 
 interface ApiResponse<T> {
-  content: T;
+    content: T;
 }
 
 const viTriService = {
-  getViTriAll: () => api.get<ApiResponse<ViTri[]>>('/api/vi-tri'),
+    getViTriAll: () => api.get<ApiResponse<ViTri[]>>('/api/vi-tri'),
 
-  getViTriPhanTrang: (pageIndex = 1, pageSize = 8) =>
-    api.get<ApiResponse<{ data: ViTri[] }>>(
-      `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}`
-    ),
+    getViTriPhanTrang: (pageIndex = 1, pageSize = 8, keyword = '') =>
+        api.get<ApiResponse<{ data: ViTri[] }>>(
+            `/api/vi-tri/phan-trang-tim-kiem?pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword)}`
+        ),
+
+    addViTri: (data: ViTri) => api.post('/api/vi-tri', data),
+
+    updateViTri: (id: number, data: Partial<ViTri>) => api.put(`/api/vi-tri/${id}`, data),
+
+    deleteViTri: (id: number) => api.delete(`/api/vi-tri/${id}`),
+
+    uploadHinhViTri: (id: number, formData: FormData) =>
+        api.post(`/api/vi-tri/upload-hinh/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }),
+
 };
 
 export default viTriService;

@@ -78,7 +78,7 @@ export default function ManageLocationsPage() {
                 await viTriService.updateViTri(editingLocation.id, values);
                 toast.success('Cập nhật vị trí thành công!');
             } else {
-                await viTriService.addViTri({ ...values, id: 0 });
+                await viTriService.addViTri({ ...values, id: 0, hinhAnh: '' });
                 toast.success('Thêm vị trí thành công!');
             }
             fetchLocations(pagination.current, pagination.pageSize, searchTerm);
