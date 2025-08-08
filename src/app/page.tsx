@@ -4,6 +4,8 @@ import SearchWidget from '@/components/SearchWidget';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+
 const InspirationCard = ({ src, title }: { src: string, title: string }) => (
   <div>
     <div className="aspect-[4/3] w-full overflow-hidden rounded-lg">

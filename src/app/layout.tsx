@@ -1,8 +1,10 @@
+// src/app/layout.tsx
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ToastContainer } from 'react-toastify'; 
-import 'react-toastify/dist/ReactToastify.css'; 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ReduxProvider from '@/redux/ReduxProvider';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -20,25 +22,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body className={inter.className}>
         <ReduxProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
           <Header />
           <main>{children}</main>
           <Footer />
         </ReduxProvider>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </body>
     </html>
   );

@@ -6,16 +6,26 @@ interface ApiResponse<T> {
     content: T;
 }
 
+interface PaginatedResponse<T> {
+    content: {
+        pageIndex: number;
+        pageSize: number;
+        totalRow: number;
+        keywords: string | null;
+        data: T[];
+    };
+}
+
 const viTriService = {
     getViTriAll: () => api.get<ApiResponse<ViTri[]>>('/api/vi-tri'),
 
     getViTriPhanTrang(page: number, pageSize: number, keyword: string = '') {
-        return api.get(`/api/vi-tri/phan-trang-tim-kiem`, {
+        return api.get<PaginatedResponse<ViTri>>(`/api/vi-tri/phan-trang-tim-kiem`, {
             params: {
                 pageIndex: page,
                 pageSize: pageSize,
-                keyword: keyword
-            }
+                keyword: keyword,
+            },
         });
     },
 
