@@ -47,6 +47,7 @@ export default function ManageRoomsPage() {
         try {
             const response = await phongService.getPhongPhanTrang(page, pageSize, keyword);
             const data = response.data.content;
+            console.log('3. Fetched rooms:', data); // 3
             setRooms(data.data);
             setPagination({ current: data.pageIndex, pageSize: data.pageSize, total: data.totalRow });
         } catch {
@@ -60,6 +61,7 @@ export default function ManageRoomsPage() {
         try {
             const response = await viTriService.getViTriAll();
             setLocations(response.data?.content || []);
+
         } catch {
             toast.error('Không thể tải danh sách vị trí.');
         }

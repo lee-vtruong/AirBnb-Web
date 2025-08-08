@@ -13,6 +13,7 @@ interface Props {
 async function getRoomsByLocation(maViTri: string): Promise<Phong[]> {
   try {
     const response = await phongService.getPhongTheoViTri(maViTri);
+    console.log(`7. Fetched rooms for location ${maViTri}:`, response.data); //7
     return response.data?.content || [];
   } catch (error) {
     console.error(`[API Error] Failed to fetch rooms for location ${maViTri}:`, error);

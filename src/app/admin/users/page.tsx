@@ -54,6 +54,7 @@ export default function ManageUsersPage() {
         try {
             const response = await nguoiDungService.getUsersPhanTrang(page, pageSize, keyword);
             const data = response.data.content;
+            console.log('4. Fetched users:', data); // 4
             setUsers(data.data);
             setPagination({
                 current: data.pageIndex,

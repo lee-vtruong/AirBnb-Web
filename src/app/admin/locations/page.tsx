@@ -47,6 +47,7 @@ export default function ManageLocationsPage() {
             const response = await viTriService.getViTriPhanTrang(page, pageSize, keyword);
 
             const data: PaginatedResponse<ViTri> = response.data.content;
+            console.log('2. Fetched locations:', data); // 2
 
             setLocations(data.data);
             setPagination({

@@ -22,6 +22,7 @@ export default function BookingHistoryPage() {
                     const response = await datPhongService.getDatPhongTheoNguoiDung(currentUser.id);
                     if (response.data && response.data.content) {
                         const content = response.data.content;
+                        console.log('5. Fetched bookings:', content); // 5
                         const bookingsArray = Array.isArray(content) ? content : [content];
                         setBookings(bookingsArray);
                     }

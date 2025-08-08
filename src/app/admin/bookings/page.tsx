@@ -26,6 +26,7 @@ export default function ManageBookingsPage() {
         try {
             const response = await datPhongService.getDatPhongAll();
             const content = response.data?.content || [];
+            console.log('1. content bookings page', content); //1
             // Đảm bảo content luôn là array
             const bookingsArray = Array.isArray(content) ? content : [content];
             setBookings(bookingsArray);

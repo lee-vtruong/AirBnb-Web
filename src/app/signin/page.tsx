@@ -41,6 +41,7 @@ export default function SignInPage() {
             setIsLoading(true);
             try {
                 const response = await authService.signIn(values);
+                console.log('8. Sign-in response:', response.data); // 8
 
                 if (response.data && response.data.content) {
                     const { user, token } = response.data.content;

@@ -18,6 +18,7 @@ export default async function HomePage() {
   try {
     const response = await viTriService.getViTriPhanTrang(1, 8);
     nearbyLocations = response.data.content.data || [];
+    console.log('9. Nearby locations:', nearbyLocations); // 9
   } catch (error) {
     console.error("Failed to fetch nearby locations:", error);
   }
