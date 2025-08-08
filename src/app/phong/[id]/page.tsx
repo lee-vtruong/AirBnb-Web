@@ -3,6 +3,7 @@ import { Phong } from '@/types/room.types';
 import BookingWidget from '@/components/BookingWidget';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import CommentSection from '@/components/CommentSection';
 
 interface Props {
     params: Promise<{
@@ -144,11 +145,16 @@ export default async function RoomDetailPage({ params }: Props) {
                         </div>
                     </div>
 
+
                     <div className="lg:col-span-1">
                         <div className="sticky top-24">
                             <BookingWidget room={room} />
                         </div>
                     </div>
+
+                </div>
+                <div className="border-b pb-6 mb-6 w-full h-full">
+                    <CommentSection roomId={room.id} />
                 </div>
             </div>
         );
