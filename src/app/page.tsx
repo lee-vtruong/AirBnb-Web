@@ -1,10 +1,12 @@
+"use client"; 
+
+import { useState, useEffect } from 'react';
+
 import viTriService from '@/services/viTriService';
 import { ViTri } from '@/types/location.types';
 import SearchWidget from '@/components/SearchWidget';
 import Link from 'next/link';
 import Image from 'next/image';
-
-export const dynamic = 'force-dynamic';
 
 const InspirationCard = ({ src, title }: { src: string, title: string }) => (
   <div>
@@ -15,14 +17,48 @@ const InspirationCard = ({ src, title }: { src: string, title: string }) => (
   </div>
 );
 
-export default async function HomePage() {
-  let nearbyLocations: ViTri[] = [];
-  try {
-    const response = await viTriService.getViTriPhanTrang(1, 8);
-    nearbyLocations = response.data.content.data || [];
-    console.log('9. Nearby locations:', nearbyLocations); // 9
-  } catch (error) {
-    console.error("Failed to fetch nearby locations:", error);
+export default function HomePage() {
+  const [nearbyLocations, setNearbyLocations] = useState<ViTri[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const response = await viTriService.getViTriPhanTrang(1, 8);
+        const locationsData = response.data?.content?.data || [];
+        setNearbyLocations(locationsData);
+        console.log('9. Client-side fetch success:', locationsData);
+      } catch (error) {
+        console.error("Failed to fetch nearby locations on client:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []); 
+
+  if (isLoading) {
+    return (
+      <main>
+        <div className="container mx-auto py-16 px-4">
+          <section>
+            <h2 className="text-4xl font-bold mb-8">Đang tải các điểm đến gần đây...</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg animate-pulse"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -57,25 +93,31 @@ export default async function HomePage() {
         <section>
           <h2 className="text-4xl font-bold mb-8">Khám phá những điểm đến gần đây</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {nearbyLocations.map((viTri) => (
-              <Link key={viTri.id} href={`/phong-theo-vi-tri/${viTri.id}`}>
-                <div className="flex items-center space-x-4 group">
-                  <div className="w-16 h-16 relative rounded-lg overflow-hidden">
-                    {viTri.hinhAnh && (
-                      <Image
-                        src={viTri.hinhAnh}
-                        alt={viTri.tenViTri}
-                        fill className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
-                    )}
+            {nearbyLocations.length > 0 ? (
+              nearbyLocations.map((viTri) => (
+                <Link key={viTri.id} href={`/phong-theo-vi-tri/${viTri.id}`}>
+                  <div className="flex items-center space-x-4 group">
+                    <div className="w-16 h-16 relative rounded-lg overflow-hidden">
+                      {viTri.hinhAnh && (
+                        <Image
+                          src={viTri.hinhAnh}
+                          alt={viTri.tenViTri}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-bold">{viTri.tenViTri}</h3>
+                      <p className="text-gray-500">{viTri.tinhThanh}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold">{viTri.tenViTri}</h3>
-                    <p className="text-gray-500">Khoảng cách...</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))
+            ) : (
+              <p>Không tìm thấy địa điểm nào.</p>
+            )}
           </div>
         </section>
 
