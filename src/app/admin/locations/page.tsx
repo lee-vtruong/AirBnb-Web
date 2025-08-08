@@ -24,7 +24,7 @@ type PaginatedResponse<T> = {
     pageIndex: number;
     pageSize: number;
     totalRow: number;
-    keywords: string;
+    keywords: string | null;
     data: T[];
 };
 
